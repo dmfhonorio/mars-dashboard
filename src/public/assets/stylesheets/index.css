@@ -49,8 +49,9 @@ footer {
   color: white;
 }
 
-.selected-rover .rover-info {
+.selected-rover .rover-content {
   margin: 0 -1rem;
+  display: flex;
 }
 
 .selected-rover .rover-title {
@@ -80,6 +81,10 @@ footer {
   font-size: 1.125rem;
   font-weight: 600;
   margin-top: 0.5rem;
+}
+
+.rover-photos {
+  width: 50%;
 }
 
 .nav-menu {

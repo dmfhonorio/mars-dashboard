@@ -23,10 +23,22 @@ const render = async (root, state) => {
 
 const addEventListeners = state => {
   let rovers = state.get('rovers').toJS();
-  rovers.forEach(rover => {
+  rovers.forEach((rover, i) => {
     const navItemEl = document.getElementById(`nav-${rover.name}`);
     navItemEl.addEventListener('click', () => {
       updateStore(state, { selectedRover: Map(rover) });
+      if (!rover.photos || rover.photos.length == 0) {
+        setTimeout(() => {
+          fetch(`${API}/rovers/${rover.name}?date=${rover.max_date}`)
+            .then(res => res.json())
+            .then(photos => {
+              let rovers = state.get('rovers');
+              let rover = { ...rovers.get(i), photos };
+              rovers = rovers.set(i, rover);
+              updateStore(state, { selectedRover: Map(rover), rovers });
+            })
+        }, 1);
+      }
     })
   })
 }
@@ -34,6 +46,7 @@ const addEventListeners = state => {
 // create content
 const App = (state) => {
   let rovers = state.get('rovers').toJS();
+  console.log(rovers);
   let selectedRover = state.get('selectedRover') ? state.get('selectedRover').toJS() : null;
   return `
     <div class="bg-img ${selectedRover ? 'blurred' : ''}"></div>
@@ -78,22 +91,25 @@ const NavMenuItem = ({ name }) => {
   `;
 }
 
-const SelectedRover = ({ name, status, landing_date, launch_date, max_date, cameras }) => {
+const SelectedRover = ({ name, status, landing_date, launch_date, max_date, cameras, photos }) => {
   return `
     <div class="selected-rover">
       <h2 class="rover-title">${name}</h2>
-      <div class="rover-info">
-        ${RoverStat({ title: 'Status', stat: status })}
-        ${RoverStat({
-        title: 'Cameras', stat: cameras.map(camera => `
-          <p>${camera.full_name}</p>
-          `).join("")
-        })}
-        <div class="rover-stats">
-          ${RoverStat({ title: 'Launch date', stat: launch_date })}
-          ${RoverStat({ title: 'Landing date', stat: landing_date })}
-          ${RoverStat({ title: 'Last mission', stat: max_date })}
+      <div class="rover-content">
+        <div class="rover-info">
+          ${RoverStat({ title: 'Status', stat: status })}
+          ${RoverStat({
+    title: 'Cameras', stat: cameras.map(camera => `
+                  <p>${camera.full_name}</p>
+                  `).join("")
+  })}
+          <div class="rover-stats">
+            ${RoverStat({ title: 'Launch date', stat: launch_date })}
+            ${RoverStat({ title: 'Landing date', stat: landing_date })}
+            ${RoverStat({ title: 'Last mission', stat: max_date })}
+          </div>
         </div>
+        ${RoverPhotos({ photos })}
       </div>
     </div>
   `;
@@ -105,6 +121,15 @@ const RoverStat = ({ title, stat }) => {
       <p class="rover-stat-title">${title}</p>
       <div class="rover-stat-value">${stat}</div>
     </div>
+  `;
+}
+
+const RoverPhotos = ({ photos }) => {
+  return `
+    ${photos ?
+      `<div class="rover-photos">
+        ${photos.map(photo => `<img src="${photo.img_src}"></img>`).join('')}
+      </div>` : ''}
   `;
 }
 
