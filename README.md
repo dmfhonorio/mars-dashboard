@@ -34,29 +34,29 @@ We have supplied some of the foundational code for you. So follow these steps to
 
 To complete this project, your UI must show the following:
 
-- [ ] A gallery of the most recent images sent from each mars rover
-- [ ] The launch date, landing date, name and status along with any other information about the rover
-- [ ] A selection bar for the user to choose which rover's information they want to see
+- [x] A gallery of the most recent images sent from each mars rover
+- [x] The launch date, landing date, name and status along with any other information about the rover
+- [x] A selection bar for the user to choose which rover's information they want to see
 
 To complete this project, your UI must do the following:
 
-- [ ] Be responsive. Needs to look good(aka not broken) on phones(max width 768px) and desktop(min-width 991px, max-width 1824px). Tablet view is optional.
-- [ ] Provide a way to dynamically switch the UI to view one of the three rovers 
+- [x] Be responsive. Needs to look good(aka not broken) on phones(max width 768px) and desktop(min-width 991px, max-width 1824px). Tablet view is optional.
+- [x] Provide a way to dynamically switch the UI to view one of the three rovers 
 **This can be done using tabs, buttons, or any other UI control
 
 To complete this project, your frontend code must:
 
-- [ ] Use only pure functions
-- [ ] Use at least one Higher Order Function
-- [ ] Use the array method `map`
-- [ ] Use the ImmutableJS library
+- [x] Use only pure functions
+- [x] Use at least one Higher Order Function
+- [x] Use the array method `map`
+- [x] Use the ImmutableJS library
 
 To complete this project, your backend code must:
 
-- [ ] Be built with Node/Express
-- [ ] Make successful calls to the NASA API
-- [ ] Use pure functions to do any logic necessary
-- [ ] Hide any sensetive information from public view (In other words, use your dotenv file)
+- [x] Be built with Node/Express
+- [x] Make successful calls to the NASA API
+- [x] Use pure functions to do any logic necessary
+- [x] Hide any sensetive information from public view (In other words, use your dotenv file)
 
 ### Above and Beyond
 
