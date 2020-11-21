@@ -21,12 +21,11 @@ const createEndpoint = (path) => {
 
 app.get('/rovers', async (req, res) => {
   try {
-    const rovers = await fetch(createEndpoint("/rovers?"))
+    await fetch(createEndpoint("/rovers?"))
       .then(res => res.json())
       .then(rovers => res.send(rovers.rovers));
-    // res.send(rovers);
   } catch (err) {
-    console.log(err);
+    res.status(500).json({ error: 'error fetching rovers from NASA API'})
   }
 })
 
@@ -37,21 +36,9 @@ app.get('/rovers/:id', async (req, res) => {
     await fetch(createEndpoint(`/rovers/${id}/photos?earth_date=${date}&`))
       .then(res => res.json())
       .then(rover => res.send(rover.photos));
-    // res.send(rovers);
   } catch (err) {
-    console.log(err);
+    res.status(500).json({ error: `error fetching rover ${id} from NASA API`})
   }
-})
-
-// example API call
-app.get('/apod', async (req, res) => {
-    try {
-        let image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=`)
-            .then(res => res.json())
-        res.send({ image })
-    } catch (err) {
-        console.log('error:', err);
-    }
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
