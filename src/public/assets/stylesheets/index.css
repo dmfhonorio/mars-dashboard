@@ -196,7 +196,7 @@ main {
 }
 
 /* -------------------  MOBILE  --------------------- */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
 
   .mars.animated {
     animation: title-entrance-mobile 2s ease-out forwards;
