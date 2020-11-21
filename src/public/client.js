@@ -1,9 +1,12 @@
+// @ts-check
+
 const Map = Immutable.Map;
 const List = Immutable.List;
 
 const API = "http://localhost:3000";
 
 let store = Map({
+  isLoading: true,
   rovers: List(),
   selectedRover: null,
   selectedPhoto: null
@@ -13,13 +16,14 @@ let store = Map({
 const root = document.getElementById('root')
 
 const updateStore = (store, newState) => {
-  state = store.merge(newState);
+  const state = store.merge(newState);
   render(root, state);
 }
 
 const render = async (root, state) => {
   root.innerHTML = App(state);
   addEventListeners(state);
+  addSlideshowListener(state);
 }
 
 const addEventListeners = state => {
@@ -49,29 +53,45 @@ const addEventListeners = state => {
     })
   })
 
-  const nextRoverPicEl = document.getElementById('next-rover-pic');
-  if (nextRoverPicEl) {
-    nextRoverPicEl.addEventListener('click', () => {
-      let nextIndex = state.get('selectedPhoto').get('currentIndex') + 1;
-      let nextPhoto = state.getIn(['selectedRover', 'photos', nextIndex]);
-      if (!nextPhoto) {
-        nextPhoto = state.getIn(['selectedRover', 'photos', 0]);
-        nextIndex = 0;
-      }
-      nextPhoto = nextPhoto.set('currentIndex', nextIndex);
-      updateStore(state, { selectedPhoto: nextPhoto })
-    })
+
+}
+
+const addSlideshowListener = state => {
+  const getNextPhoto = (dir, state) => {
+    let nextIndex = state.get('selectedPhoto').get('currentIndex') + dir;
+    const photos = state.getIn(['selectedRover', 'photos']);
+    let nextPhoto = photos.get(nextIndex);
+    if (!nextPhoto) {
+      nextIndex = 0;
+      nextPhoto = photos.get(nextIndex);
+    }
+    if (nextIndex < 0) nextIndex = photos.size + nextIndex;
+    nextPhoto = nextPhoto.set('currentIndex', nextIndex);
+    return nextPhoto;
   }
-  const prevRoverPicEl = document.getElementById('prev-rover-pic');
+
+  const addSlideshowBtnListener = (buttonId, dir, state) => {
+    const buttonEl = document.getElementById(buttonId);
+    if (buttonEl) {
+      buttonEl.addEventListener('click', () => {
+        const nextPhoto = getNextPhoto(dir, state);
+        updateStore(state, Map({ selectedPhoto: nextPhoto }))
+      })
+    }
+  }
+
+  addSlideshowBtnListener('next-rover-pic', 1, state);
+  addSlideshowBtnListener('prev-rover-pic', -1, state);
 }
 
 // create content
 const App = (state) => {
   let rovers = state.get('rovers').toJS();
-  console.log(state.toJS());
   let selectedRover = state.get('selectedRover') ? state.get('selectedRover').toJS() : null;
   let selectedPhoto = state.get('selectedPhoto') ? state.get('selectedPhoto').toJS() : null;
+  const isLoading = state.get('isLoading');
   return `
+    ${!selectedRover ? `<h1 class="mars ${isLoading ? 'animated' : 'loaded'}">Mars</h2>` : '' }
     <div class="bg-img ${selectedRover ? 'blurred' : ''}"></div>
     <div class="content">
       ${selectedRover ? SelectedRover({ selectedRover, selectedPhoto }) : ''}
@@ -168,5 +188,7 @@ const RoverPhotosSlideshow = ({ selectedPhoto, totalPhotos }) => {
 fetch(`${API}/rovers`)
   .then(res => res.json())
   .then(rovers => {
-    updateStore(store, { rovers: List(rovers) });
+    setTimeout(() => {
+      updateStore(store, { rovers: List(rovers), isLoading: false });
+    }, 1500);
   })
