@@ -95,9 +95,8 @@ const App = (state) => {
     <div class="bg-img ${selectedRover ? 'blurred' : ''}"></div>
     <div class="content">
       ${selectedRover ? SelectedRover({ selectedRover, selectedPhoto }) : ''}
-      ${NavMenu(rovers)}
+      ${rovers.length > 0 ? `<footer>${NavMenu(rovers)}</footer>` : ''}
     </div>
-    <footer></footer>
   `
 }
 

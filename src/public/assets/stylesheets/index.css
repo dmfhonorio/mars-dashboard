@@ -18,6 +18,7 @@ main {
   color: white;
   z-index: 1;
   top: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,6 +35,7 @@ main {
   opacity: 1;
   font-size: 11rem;
   letter-spacing: 7.5rem;
+  text-indent: 7.5rem;
 }
 
 .bg-img {
@@ -67,6 +69,7 @@ main {
 .selected-rover .rover-content {
   margin: 0 -1rem;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .selected-rover .rover-info {
@@ -192,21 +195,69 @@ main {
   transform: translateX(-50%);
 }
 
-/* -------------------  TABLET  --------------------- */
-@media (min-width: 768px) {
-  /* use mobile */
-}
+/* -------------------  MOBILE  --------------------- */
+@media (max-width: 600px) {
 
-/* -------------------  DESKTOP  -------------------- */
+  .mars.animated {
+    animation: title-entrance-mobile 2s ease-out forwards;
+    font-size: 5rem;
+    letter-spacing: 1.5rem;
+    text-indent: 1.5rem;
+  }
+  
+  .mars.loaded {
+    font-size: 5rem;
+    letter-spacing: 1.5rem;
+    text-indent: 1.5rem;
+  }
 
-@media (min-width: 1224px) {
-  /* use mobile */
-}
+  .nav-menu {
+    padding: 0 1rem;
+    background: #080807;
+  }
 
-/* -------------------  LARGE SCREENS  -------------- */
+  .nav-menu ul li {
+    font-size: 1rem;
+    padding: 1rem 0;
+  }
+  
+  .selected-rover {
+    padding: 0;
+  }
+  
+  .selected-rover .rover-content {
+    margin: 0;
+    padding-bottom: 6rem;
+  }
 
-@media (min-width: 1824px) {
-  /* use mobile */
+  .selected-rover .rover-info {
+    width: 100%;
+    order: 2;
+    margin: 0 -0.25rem;
+  }
+
+  .selected-rover .rover-photos {
+    width: 100%;
+  }
+
+  .selected-rover .rover-title {
+    letter-spacing: 0.6rem;
+    font-size: 1.5rem;
+  }
+
+  .rover-stat {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .rover-stat .rover-stat-title {
+    font-size: 0.875rem;
+  }
+  
+  .rover-stat .rover-stat-value {
+    font-size: 1rem;
+    font-weight: 400;
+    margin-top: 0.25rem;
+  }
 }
 
 @keyframes title-entrance {
@@ -219,5 +270,20 @@ main {
     opacity: 1;
     font-size: 11rem;
     letter-spacing: 7.5rem;
+    text-indent: 7.5rem;
+  }
+}
+
+@keyframes title-entrance-mobile {
+  from {
+    font-size: 3rem;
+    letter-spacing: normal;
+    opacity: 0.2;
+  }
+  to {
+    opacity: 1;
+    font-size: 5rem;
+    letter-spacing: 1.5rem;
+    text-indent: 1.5rem;
   }
 }
