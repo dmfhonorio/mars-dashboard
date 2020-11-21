@@ -86,9 +86,9 @@ const addSlideshowListener = state => {
 }
 
 const App = (state) => {
-  let rovers = state.get('rovers').toJS();
-  let selectedRover = state.get('selectedRover') ? state.get('selectedRover').toJS() : null;
-  let selectedPhoto = state.get('selectedPhoto') ? state.get('selectedPhoto').toJS() : null;
+  const rovers = state.get('rovers').toJS();
+  const selectedRover = state.get('selectedRover') ? state.get('selectedRover').toJS() : null;
+  const selectedPhoto = state.get('selectedPhoto') ? state.get('selectedPhoto').toJS() : null;
   const isLoading = state.get('isLoading');
   return `
     ${!selectedRover ? `<h1 class="mars ${isLoading ? 'animated' : 'loaded'}">Mars</h2>` : ''}
@@ -188,5 +188,5 @@ fetch(`${API}/rovers`)
   .then(rovers => {
     setTimeout(() => {
       updateStore(store, { rovers: List(rovers), isLoading: false });
-    }, 1500);
+    }, 1000);
   })
