@@ -68,17 +68,21 @@ const addSlideshowListener = state => {
     nextPhoto = nextPhoto.set('currentIndex', nextIndex);
     return nextPhoto;
   }
-  const addSlideshowBtnListener = (buttonId, dir, state) => {
-    const buttonEl = document.getElementById(buttonId);
-    if (buttonEl) {
-      buttonEl.addEventListener('click', () => {
-        const nextPhoto = getNextPhoto(dir, state);
-        updateStore(state, Map({ selectedPhoto: nextPhoto }))
+  const addSlideshowBtnListener = (slideshowId, state) => {
+    const slideShowEl = document.getElementById(slideshowId);
+    if (slideShowEl) {
+      slideShowEl.addEventListener('click', event => {
+        const targetId = event.target.id;
+        const dir = targetId == 'next-rover-pic' ? 1 :
+          targetId == 'prev-rover-pic' ? -1 : null;
+        if (dir) {
+          const nextPhoto = getNextPhoto(dir, state);
+          updateStore(state, Map({ selectedPhoto: nextPhoto }))
+        }
       })
     }
   }
-  addSlideshowBtnListener('next-rover-pic', 1, state);
-  addSlideshowBtnListener('prev-rover-pic', -1, state);
+  addSlideshowBtnListener('rover-photos-slider', state);
 }
 
 const App = (state) => {
@@ -87,7 +91,7 @@ const App = (state) => {
   let selectedPhoto = state.get('selectedPhoto') ? state.get('selectedPhoto').toJS() : null;
   const isLoading = state.get('isLoading');
   return `
-    ${!selectedRover ? `<h1 class="mars ${isLoading ? 'animated' : 'loaded'}">Mars</h2>` : '' }
+    ${!selectedRover ? `<h1 class="mars ${isLoading ? 'animated' : 'loaded'}">Mars</h2>` : ''}
     <div class="bg-img ${selectedRover ? 'blurred' : ''}"></div>
     <div class="content">
       ${selectedRover ? SelectedRover({ selectedRover, selectedPhoto }) : ''}
@@ -167,7 +171,7 @@ const RoverStat = ({ title, stat }) => {
 
 const RoverPhotosSlideshow = ({ selectedPhoto, totalPhotos }) => {
   return `
-    <div class="rover-slideshow">
+    <div id="rover-photos-slider" class="rover-slideshow">
       <p class="slideshow-total">${selectedPhoto.currentIndex + 1}/${totalPhotos}</p>
       <img src="${selectedPhoto.img_src}" />
       <p class="slideshow-camera">${selectedPhoto.camera.full_name}</p>
