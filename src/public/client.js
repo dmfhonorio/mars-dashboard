@@ -12,7 +12,6 @@ let store = Map({
   selectedPhoto: null
 })
 
-// add our markup to the page
 const root = document.getElementById('root')
 
 const updateStore = (store, newState) => {
@@ -69,7 +68,6 @@ const addSlideshowListener = state => {
     nextPhoto = nextPhoto.set('currentIndex', nextIndex);
     return nextPhoto;
   }
-
   const addSlideshowBtnListener = (buttonId, dir, state) => {
     const buttonEl = document.getElementById(buttonId);
     if (buttonEl) {
@@ -79,12 +77,10 @@ const addSlideshowListener = state => {
       })
     }
   }
-
   addSlideshowBtnListener('next-rover-pic', 1, state);
   addSlideshowBtnListener('prev-rover-pic', -1, state);
 }
 
-// create content
 const App = (state) => {
   let rovers = state.get('rovers').toJS();
   let selectedRover = state.get('selectedRover') ? state.get('selectedRover').toJS() : null;
@@ -100,7 +96,6 @@ const App = (state) => {
   `
 }
 
-// listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
   render(root, store)
 })
