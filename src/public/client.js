@@ -5,7 +5,8 @@ const API = "http://localhost:3000";
 
 let store = Map({
   rovers: List(),
-  selectedRover: null
+  selectedRover: null,
+  selectedPhoto: null
 })
 
 // add our markup to the page
@@ -26,32 +27,54 @@ const addEventListeners = state => {
   rovers.forEach((rover, i) => {
     const navItemEl = document.getElementById(`nav-${rover.name}`);
     navItemEl.addEventListener('click', () => {
-      updateStore(state, { selectedRover: Map(rover) });
-      if (!rover.photos || rover.photos.length == 0) {
+      let selectedPhoto;
+      const roverPhotos = rover.photos && rover.photos.toJS();
+      if (roverPhotos && roverPhotos.length > 0) {
+        selectedPhoto = Map(roverPhotos[0]).set('currentIndex', 0);
+      }
+      updateStore(state, { selectedRover: Map(rover), selectedPhoto });
+      if (!roverPhotos || roverPhotos.length == 0) {
         setTimeout(() => {
           fetch(`${API}/rovers/${rover.name}?date=${rover.max_date}`)
             .then(res => res.json())
             .then(photos => {
               let rovers = state.get('rovers');
+              photos = List(photos.map(photo => Map(photo)));
               let rover = { ...rovers.get(i), photos };
               rovers = rovers.set(i, rover);
-              updateStore(state, { selectedRover: Map(rover), rovers });
+              updateStore(state, { selectedRover: Map(rover), rovers, selectedPhoto: Map(photos.get(0)).set('currentIndex', 0) });
             })
         }, 1);
       }
     })
   })
+
+  const nextRoverPicEl = document.getElementById('next-rover-pic');
+  if (nextRoverPicEl) {
+    nextRoverPicEl.addEventListener('click', () => {
+      let nextIndex = state.get('selectedPhoto').get('currentIndex') + 1;
+      let nextPhoto = state.getIn(['selectedRover', 'photos', nextIndex]);
+      if (!nextPhoto) {
+        nextPhoto = state.getIn(['selectedRover', 'photos', 0]);
+        nextIndex = 0;
+      }
+      nextPhoto = nextPhoto.set('currentIndex', nextIndex);
+      updateStore(state, { selectedPhoto: nextPhoto })
+    })
+  }
+  const prevRoverPicEl = document.getElementById('prev-rover-pic');
 }
 
 // create content
 const App = (state) => {
   let rovers = state.get('rovers').toJS();
-  console.log(rovers);
+  console.log(state.toJS());
   let selectedRover = state.get('selectedRover') ? state.get('selectedRover').toJS() : null;
+  let selectedPhoto = state.get('selectedPhoto') ? state.get('selectedPhoto').toJS() : null;
   return `
     <div class="bg-img ${selectedRover ? 'blurred' : ''}"></div>
     <div class="content">
-      ${selectedRover ? SelectedRover(selectedRover) : ''}
+      ${selectedRover ? SelectedRover({ selectedRover, selectedPhoto }) : ''}
       ${NavMenu(rovers)}
     </div>
     <footer></footer>
@@ -91,25 +114,29 @@ const NavMenuItem = ({ name }) => {
   `;
 }
 
-const SelectedRover = ({ name, status, landing_date, launch_date, max_date, cameras, photos }) => {
+const SelectedRover = ({ selectedRover, selectedPhoto }) => {
+  const { name, status, landing_date, launch_date, max_date, cameras, photos } = selectedRover;
   return `
     <div class="selected-rover">
       <h2 class="rover-title">${name}</h2>
       <div class="rover-content">
         <div class="rover-info">
           ${RoverStat({ title: 'Status', stat: status })}
-          ${RoverStat({
-    title: 'Cameras', stat: cameras.map(camera => `
-                  <p>${camera.full_name}</p>
-                  `).join("")
-  })}
+          ${RoverStat(
+    {
+      title: 'Cameras',
+      stat: cameras.map(camera => `<p>${camera.full_name}</p>`).join("")
+    })
+    }
           <div class="rover-stats">
             ${RoverStat({ title: 'Launch date', stat: launch_date })}
             ${RoverStat({ title: 'Landing date', stat: landing_date })}
             ${RoverStat({ title: 'Last mission', stat: max_date })}
           </div>
         </div>
-        ${RoverPhotos({ photos })}
+        <div class="rover-photos">
+          ${selectedPhoto ? RoverPhotosSlideshow({ selectedPhoto, totalPhotos: photos.length }) : ''}
+        </div>
       </div>
     </div>
   `;
@@ -124,12 +151,15 @@ const RoverStat = ({ title, stat }) => {
   `;
 }
 
-const RoverPhotos = ({ photos }) => {
+const RoverPhotosSlideshow = ({ selectedPhoto, totalPhotos }) => {
   return `
-    ${photos ?
-      `<div class="rover-photos">
-        ${photos.map(photo => `<img src="${photo.img_src}"></img>`).join('')}
-      </div>` : ''}
+    <div class="rover-slideshow">
+      <p class="slideshow-total">${selectedPhoto.currentIndex + 1}/${totalPhotos}</p>
+      <img src="${selectedPhoto.img_src}" />
+      <p class="slideshow-camera">${selectedPhoto.camera.full_name}</p>
+      <button class="slideshow-nav previous" id="prev-rover-pic">←</button>
+      <button class="slideshow-nav next" id="next-rover-pic">→</button>
+    </div>
   `;
 }
 
