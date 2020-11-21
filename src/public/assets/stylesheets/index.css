@@ -195,6 +195,12 @@ main {
   transform: translateX(-50%);
 }
 
+.photos-date {
+  margin-top: 0.5rem;
+  color: #eee;
+  font-size: 0.875rem;
+}
+
 /* -------------------  MOBILE  --------------------- */
 @media (max-width: 768px) {
 

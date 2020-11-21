@@ -134,6 +134,7 @@ const NavMenuItem = ({ name }) => {
 
 const SelectedRover = ({ selectedRover, selectedPhoto }) => {
   const { name, status, landing_date, launch_date, max_date, cameras, photos } = selectedRover;
+  console.log(photos);
   return `
     <div class="selected-rover">
       <h2 class="rover-title">${name}</h2>
@@ -153,7 +154,7 @@ const SelectedRover = ({ selectedRover, selectedPhoto }) => {
           </div>
         </div>
         <div class="rover-photos">
-          ${selectedPhoto ? RoverPhotosSlideshow({ selectedPhoto, totalPhotos: photos.length }) : ''}
+          ${selectedPhoto ? RoverPhotosSlideshow({ selectedPhoto, totalPhotos: photos.length, photosDate: photos[0].earth_date }) : ''}
         </div>
       </div>
     </div>
@@ -169,7 +170,7 @@ const RoverStat = ({ title, stat }) => {
   `;
 }
 
-const RoverPhotosSlideshow = ({ selectedPhoto, totalPhotos }) => {
+const RoverPhotosSlideshow = ({ selectedPhoto, totalPhotos, photosDate }) => {
   return `
     <div id="rover-photos-slider" class="rover-slideshow">
       <p class="slideshow-total">${selectedPhoto.currentIndex + 1}/${totalPhotos}</p>
@@ -177,7 +178,8 @@ const RoverPhotosSlideshow = ({ selectedPhoto, totalPhotos }) => {
       <p class="slideshow-camera">${selectedPhoto.camera.full_name}</p>
       <button class="slideshow-nav previous" id="prev-rover-pic">←</button>
       <button class="slideshow-nav next" id="next-rover-pic">→</button>
-    </div>
+      </div>
+      <p class="photos-date">This photos were taken on ${photosDate}</p>
   `;
 }
 
